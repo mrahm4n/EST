@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Euro Status Check</title>
+</head>
+<body>
+  <h1>Euro Status Check</h1>
+  <form id="emissionForm">
+    <label for="co">CO (g/km):</label>
+    <input type="number" step="0.01" id="co" required><br>
+    <label for="hcnox">HC + NOx (g/km):</label>
+    <input type="number" step="0.01" id="hcnox" required><br>
+    <label for="nox">NOx (g/km):</label>
+    <input type="number" step="0.01" id="nox" required><br>
+    </br><button type="button" onclick="check()">Check Euro Status</button>
+  </form>
+  <p id="result"></p>
+
+  <script>
+    function check() {
+      const co = parseFloat(document.getElementById("co").value);
+      const hcnox = parseFloat(document.getElementById("hcnox").value);
+      const nox = parseFloat(document.getElementById("nox").value);
+
+      if (co <= 0.74 && hcnox <= 0.215 && nox <= 0.125) {
+        displayResult("Euro 6");
+      } else if (co <= 0.74 && hcnox <= 0.35 && nox <= 0.28) {
+        displayResult("Euro 5");
+      } else if (co <= 0.74 && hcnox <= 0.46 && nox <= 0.39) {
+        displayResult("Euro 4");
+      } else if (co <= 0.95 && hcnox <= 0.86 && nox <= 0.78) {
+        displayResult("Euro 3");
+      } else {
+        displayResult("Please ensure you have input the emissions data correctly");
+      }
+    }
+
+    function displayResult(result) {
+      document.getElementById("result").textContent = "Emission Status: " + result;
+    }
+  </script>
+</body>
+</html>
