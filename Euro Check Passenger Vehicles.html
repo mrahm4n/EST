@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LEZ Vehicle Checker</title>
+    <style>
+        body {
+            font-family: "Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", sans-serif;
+            -moz-osx-font-smoothing: grayscale;
+            font-size: 16px;
+            font-weight: 400;
+        }
+
+        h1 {
+            font-family: "Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", sans-serif;
+            -moz-osx-font-smoothing: grayscale;
+            font-size: 18px;
+            font-weight: 600;
+            padding-bottom: 10px;
+        }
+
+
+        .hidden {
+            display: none;
+        }
+
+        button {
+            border: 1px solid rgb(3, 120, 124);
+            border-radius: 4px;
+            box-sizing: border-box;
+            cursor: pointer;
+            display: inline-block;
+            padding: 0px 20px;
+            text-decoration: none;
+            text-align: center;
+            min-width: 80px;
+            height: 40px;
+            background-color: rgb(3, 120, 124);
+            color: rgb(255, 255, 255);
+            font-family: "Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", sans-serif;
+            -moz-osx-font-smoothing: grayscale;
+            font-size: 16px;
+            font-weight: 400;
+        }
+
+        button:hover {
+            background-color: rgb(2, 98, 102);
+        }
+
+        label {
+            display: inline-block;
+            width: 150px;
+            margin-bottom: 10px;
+        }
+
+        input[type="number"] {
+            width: 100px;
+        }
+
+        .initial-message {
+            background-color: #FAF7C8;
+            color: #6F471C;
+            padding: 10px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .compliance-non-compliant {
+            background-color: #ECFFD4;
+            color: #024C26;
+            padding: 10px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .compliance-compliant {
+            background-color: #EAB5B7;
+            color: #680012;
+            padding: 10px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Euro Status Check <em style="font-size: 12px; font-weight: normal;">for passenger vehicles</em></h1>
+
+    <form id="lezForm">
+        <label for="fuelType">Fuel Type:</label>
+        <select id="fuelType" onchange="toggleInputFields()" required>
+            <option value="Petrol" selected>Petrol</option>
+            <option value="Diesel">Diesel</option>
+        </select><br>
+
+        <div id="petrolInputs">
+            <label for="coPetrol">CO (g/km):</label>
+            <input type="number" id="coPetrol" step="0.01" required><br>
+            
+            <label for="hcPetrol">HC (g/km):</label>
+            <input type="number" id="hcPetrol" step="0.01" required><br>
+            
+            <label for="noxPetrol">NOx (g/km):</label>
+            <input type="number" id="noxPetrol" step="0.01" required><br>
+        </div>
+
+        <div id="dieselInputs" class="hidden">
+            <label for="coDiesel">CO (g/km):</label>
+            <input type="number" id="coDiesel" step="0.01" required><br>
+            
+            <label for="hcNoxDiesel">HC + NOx (g/km):</label>
+            <input type="number" id="hcNoxDiesel" step="0.01" required><br>
+            
+            <label for="noxDiesel">NOx (g/km):</label>
+            <input type="number" id="noxDiesel" step="0.01" required><br>
+        </div>
+
+        <button type="button" onclick="checkEuroEmissionStandard()">Submit</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        function toggleInputFields() {
+            const fuelType = document.getElementById('fuelType').value;
+            const petrolInputs = document.getElementById('petrolInputs');
+            const dieselInputs = document.getElementById('dieselInputs');
+
+            if (fuelType === 'Petrol') {
+                petrolInputs.classList.remove('hidden');
+                dieselInputs.classList.add('hidden');
+            } else if (fuelType === 'Diesel') {
+                petrolInputs.classList.add('hidden');
+                dieselInputs.classList.remove('hidden');
+            }
+        }
+
+        function checkEuroEmissionStandard() {
+            const fuelType = document.getElementById('fuelType').value;
+            let co, hc, nox;
+
+            if (fuelType === 'Petrol') {
+                co = parseFloat(document.getElementById('coPetrol').value);
+                hc = parseFloat(document.getElementById('hcPetrol').value);
+                nox = parseFloat(document.getElementById('noxPetrol').value);
+            } else if (fuelType === 'Diesel') {
+                co = parseFloat(document.getElementById('coDiesel').value);
+                hc = parseFloat(document.getElementById('hcNoxDiesel').value);
+                nox = parseFloat(document.getElementById('noxDiesel').value);
+            }
+
+            if (isNaN(co) || isNaN(hc) || isNaN(nox)) {
+                // Display error message if any input is not a number
+                const resultElement = document.getElementById('result');
+                const initialMessage = document.createElement('p');
+                initialMessage.textContent = 'Input Emissions Data';
+                initialMessage.classList.add('initial-message');
+                resultElement.textContent = '';
+                resultElement.appendChild(initialMessage);
+            } else {
+                let euroStandard;
+
+                if (fuelType === 'Petrol') {
+                    if (co <= 1.0 && hc <= 0.1 && nox <= 0.06) {
+                        euroStandard = 'Euro 5';
+                    } else if (co <= 1.0 && hc <= 0.1 && nox <= 0.08) {
+                        euroStandard = 'Euro 4';
+                    } else if (co <= 2.3 && hc <= 0.2 && nox <= 0.15) {
+                        euroStandard = 'Euro 3';
+                    } else {
+                        euroStandard = 'Euro 2';
+                    }
+                } else if (fuelType === 'Diesel') {
+                    if (co <= 2.3 && hc <= 0.5 && hc + nox <= 0.17 && nox <= 0.08) {
+                        euroStandard = 'Euro 6';
+                    } else if (co <= 0.5 && hc + nox <= 0.23 && nox <= 0.18) {
+                        euroStandard = 'Euro 5';
+                    } else if (co <= 0.5 && hc + nox <= 0.3 && nox <= 0.25) {
+                        euroStandard = 'Euro 4';
+                    } else if (co <= 0.64 && hc + nox <= 0.56 && nox <= 0.5) {
+                        euroStandard = 'Euro 3';
+                    } else {
+                        euroStandard = 'Euro 2';
+                    }
+                }
+
+                // Check compliance
+                checkCompliance(fuelType, euroStandard);
+            }
+        }
+
+        function checkCompliance(fuelType, euroStandard) {
+            const resultElement = document.getElementById('result');
+            const complianceMessage = document.createElement('p');
+            complianceMessage.innerHTML = '<strong>Euro Standard: ' + euroStandard + '</strong>';
+
+            if (fuelType === 'Petrol' && (euroStandard === 'Euro 4' || euroStandard === 'Euro 5' || euroStandard === 'Euro 6')) {
+                complianceMessage.innerHTML += ' The vehicle is compliant and does not meet criteria.';
+                complianceMessage.classList.add('compliance-compliant');
+            } else if (fuelType === 'Diesel' && euroStandard === 'Euro 6') {
+                complianceMessage.innerHTML += ' The vehicle is compliant and does not meet criteria.';
+                complianceMessage.classList.add('compliance-compliant');
+            } else {
+                complianceMessage.innerHTML += ' The vehicle is non-compliant and meets criteria.';
+                complianceMessage.classList.add('compliance-non-compliant');
+            }
+
+            resultElement.textContent = '';
+            resultElement.appendChild(complianceMessage);
+        }
+
+        // Initial message when the page is loaded
+        const resultElement = document.getElementById('result');
+        const initialMessage = document.createElement('p');
+        initialMessage.textContent = 'Input Emissions Data';
+        initialMessage.classList.add('initial-message');
+        resultElement.appendChild(initialMessage);
+    </script>
+</body>
+</html>
