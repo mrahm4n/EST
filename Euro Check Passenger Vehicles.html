@@ -190,7 +190,7 @@
         function checkCompliance(fuelType, euroStandard) {
             const resultElement = document.getElementById('result');
             const complianceMessage = document.createElement('p');
-            complianceMessage.innerHTML = '<strong>Euro Standard: ' + euroStandard + '</strong>';
+            complianceMessage.innerHTML = '<strong>Euro Status: ' + euroStandard + '</strong>';
 
             if (fuelType === 'Petrol' && (euroStandard === 'Euro 4' || euroStandard === 'Euro 5' || euroStandard === 'Euro 6')) {
                 complianceMessage.innerHTML += ' Vehicle does not meet the criteria for funding.';
