@@ -193,13 +193,13 @@
             complianceMessage.innerHTML = '<strong>Euro Standard: ' + euroStandard + '</strong>';
 
             if (fuelType === 'Petrol' && (euroStandard === 'Euro 4' || euroStandard === 'Euro 5' || euroStandard === 'Euro 6')) {
-                complianceMessage.innerHTML += ' The vehicle is compliant and does not meet criteria.';
+                complianceMessage.innerHTML += ' Vehicle does not meet the criteria for funding.';
                 complianceMessage.classList.add('compliance-compliant');
             } else if (fuelType === 'Diesel' && euroStandard === 'Euro 6') {
-                complianceMessage.innerHTML += ' The vehicle is compliant and does not meet criteria.';
+                complianceMessage.innerHTML += ' Vehicle does not meet the criteria for funding.';
                 complianceMessage.classList.add('compliance-compliant');
             } else {
-                complianceMessage.innerHTML += ' The vehicle is non-compliant and meets criteria.';
+                complianceMessage.innerHTML += ' Vehicle meets the criteria for funding.';
                 complianceMessage.classList.add('compliance-non-compliant');
             }
 
